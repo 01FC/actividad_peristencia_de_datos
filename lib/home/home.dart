@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:local_storage/home/bloc/home_bloc.dart';
 
 class Home extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldkey;
@@ -25,9 +27,31 @@ class _HomeState extends State<Home> {
   // Checkbox variables
   bool _checkValue = false;
 
+  double _sliderValue = 2.0;
+
   @override
   Widget build(BuildContext context) {
-    return buildListView(context);
+    return BlocProvider(
+      create: (context) => HomeBloc(),
+      child: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+          if (state is HomeInitial) {
+            BlocProvider.of<HomeBloc>(context).add(LoadConfigsEvent());
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (state is LoadedConfigsState) {
+            _dropSelectedValue = state.configs["drop"];
+            _switchValue = state.configs["switch"];
+            _checkValue = state.configs["check"];
+            _sliderValue = state.configs["slider"];
+            BlocProvider.of<HomeBloc>(context).add(LoadedConfigsEvent());
+          }
+          return buildListView(context);
+        },
+      ),
+    );
   }
 
   ListView buildListView(BuildContext context) {
@@ -75,6 +99,18 @@ class _HomeState extends State<Home> {
         Divider(),
         // Slider
         Text("Slider", textAlign: TextAlign.center),
+        Slider(
+          value: _sliderValue,
+          min: 0,
+          max: 10,
+          divisions: 5,
+          label: "${_sliderValue.round()}",
+          onChanged: (newValue) {
+            setState(() {
+              _sliderValue = newValue;
+            });
+          },
+        ),
 
         Divider(),
         FlatButton(
