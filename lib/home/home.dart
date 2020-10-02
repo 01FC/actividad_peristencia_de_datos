@@ -31,23 +31,18 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => HomeBloc(),
-      child: BlocBuilder<HomeBloc, HomeState>(
-        builder: (context, state) {
-          if (state is HomeInitial) {
-            BlocProvider.of<HomeBloc>(context).add(LoadConfigsEvent());
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+    return BlocProvider<HomeBloc>(
+      create: (context) => HomeBloc()..add(LoadConfigsEvent()),
+      child: BlocConsumer<HomeBloc, HomeState>(
+        listener: (context, state) {
           if (state is LoadedConfigsState) {
             _dropSelectedValue = state.configs["drop"];
             _switchValue = state.configs["switch"];
-            _checkValue = state.configs["check"];
+            _checkValue = state.configs["checkbox"];
             _sliderValue = state.configs["slider"];
-            BlocProvider.of<HomeBloc>(context).add(LoadedConfigsEvent());
           }
+        },
+        builder: (context, state) {
           return buildListView(context);
         },
       ),
@@ -88,6 +83,7 @@ class _HomeState extends State<Home> {
         ListTile(
           title: Text("Checkbox"),
           trailing: Checkbox(
+            tristate: false,
             value: _checkValue,
             onChanged: (newValue) {
               setState(() {
@@ -116,6 +112,16 @@ class _HomeState extends State<Home> {
         FlatButton(
           child: Text("Guardar"),
           onPressed: () {
+            BlocProvider.of<HomeBloc>(context).add(
+              SaveConfigsEvent(
+                configs: {
+                  "drop": _dropSelectedValue,
+                  "switch": _switchValue,
+                  "checkbox": _checkValue,
+                  "slider": _sliderValue,
+                },
+              ),
+            );
             widget.scaffoldkey.currentState
               ..hideCurrentSnackBar()
               ..showSnackBar(
