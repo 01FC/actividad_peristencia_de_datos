@@ -21,12 +21,6 @@ class _HomeState extends State<Home> {
         ),
       )
       .toList();
-  // Switch variables
-  bool _switchValue = false;
-  // Checkbox variables
-  bool _checkValue = false;
-
-  double _sliderValue = 2.0;
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +28,8 @@ class _HomeState extends State<Home> {
       create: (context) => HomeBloc()..add(LoadConfigsEvent()),
       child: BlocConsumer<HomeBloc, HomeState>(
         listener: (context, state) {
-          if (state is LoadedConfigsState) {
-            _dropSelectedValue = state.configs["drop"];
-            _switchValue = state.configs["switch"];
-            _checkValue = state.configs["checkbox"];
-            _sliderValue = state.configs["slider"];
-          }
+          // TODO: inicializar aqui los valores que se cargan en el BLoC
+          // como solo observa los estados 1 vez, aqui se puede hacer
         },
         builder: (context, state) {
           return buildListView(context);
@@ -66,66 +56,20 @@ class _HomeState extends State<Home> {
         ),
         Divider(),
         // Switch
-        ListTile(
-          title: Text("Switch"),
-          trailing: Switch(
-            value: _switchValue,
-            onChanged: (newValue) {
-              setState(() {
-                _switchValue = newValue;
-              });
-            },
-          ),
-        ),
+        // TODO: agregar List tile con Title = text y trailing = Switch
         Divider(),
         // Checkbox
-        ListTile(
-          title: Text("Checkbox"),
-          trailing: Checkbox(
-            tristate: false,
-            value: _checkValue,
-            onChanged: (newValue) {
-              setState(() {
-                _checkValue = newValue;
-              });
-            },
-          ),
-        ),
+        // TODO: agregar List tile con Title = text y trailing = Checkbox
         Divider(),
         // Slider
         Text("Slider", textAlign: TextAlign.center),
-        Slider(
-          value: _sliderValue,
-          min: 0,
-          max: 10,
-          divisions: 5,
-          label: "${_sliderValue.round()}",
-          onChanged: (newValue) {
-            setState(() {
-              _sliderValue = newValue;
-            });
-          },
-        ),
+        // TODO: agregar slider
 
         Divider(),
         MaterialButton(
           child: Text("Guardar"),
           onPressed: () {
-            BlocProvider.of<HomeBloc>(context).add(
-              SaveConfigsEvent(
-                configs: {
-                  "drop": _dropSelectedValue,
-                  "switch": _switchValue,
-                  "checkbox": _checkValue,
-                  "slider": _sliderValue,
-                },
-              ),
-            );
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(content: Text("Guardado...")),
-              );
+            //  TODO: Agregar evento para guardar
           },
         ),
       ],
