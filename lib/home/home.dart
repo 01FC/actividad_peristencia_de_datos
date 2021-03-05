@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:local_storage/home/bloc/home_bloc.dart';
 
 class Home extends StatefulWidget {
-  final GlobalKey<ScaffoldState> scaffoldkey;
-  Home({Key key, @required this.scaffoldkey}) : super(key: key);
+  Home({Key key}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -109,7 +108,7 @@ class _HomeState extends State<Home> {
         ),
 
         Divider(),
-        FlatButton(
+        MaterialButton(
           child: Text("Guardar"),
           onPressed: () {
             BlocProvider.of<HomeBloc>(context).add(
@@ -122,7 +121,7 @@ class _HomeState extends State<Home> {
                 },
               ),
             );
-            widget.scaffoldkey.currentState
+            ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
                 SnackBar(content: Text("Guardado...")),

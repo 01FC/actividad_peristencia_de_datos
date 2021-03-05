@@ -18,29 +18,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     HomeEvent event,
   ) async* {
     if (event is LoadConfigsEvent) {
-      try {
-        // verificar si existen datos
-        if (_configBox.values.isEmpty) throw Exception();
-        // cargar datos
-        Map<String, dynamic> _configs = {
-          "drop": _configBox.get("drop"),
-          "switch": _configBox.get("switch"),
-          "checkbox": _configBox.get("checkbox") ?? false,
-          "slider": _configBox.get("slider"),
-        };
-        yield LoadedConfigsState(configs: _configs);
-      } catch (ex) {
-        // no hay datos
-        print(ex.toString());
-        yield ErrorState(error: "No hay datos guardados...");
-      }
+      // verificar si existen datos
+      // cargar datos
+      Map<String, dynamic> _configs = {
+        "drop": _configBox.get("drop"),
+        "switch": _configBox.get("switch", defaultValue: false),
+        "checkbox": _configBox.get("checkbox", defaultValue: false),
+        "slider": _configBox.get("slider", defaultValue: 0),
+      };
+      yield LoadedConfigsState(configs: _configs);
     } else if (event is LoadedConfigsEvent) {
       yield DoneState();
     } else if (event is SaveConfigsEvent) {
       try {
-        // verificar si existen datos
-        if (event.configs.values.first == null) throw Exception();
-        // cargar datos
+        // guardar datos
         _configBox.put("drop", event.configs["drop"]);
         _configBox.put("switch", event.configs["switch"]);
         _configBox.put("checkbox", event.configs["checkbox"] ?? false);
